@@ -135,7 +135,8 @@ def Maximum(A):
     :return: the maximum value in array A
     :rtype: int
     """
-    return A[0]
+    if len(A) != 0:
+        return A[0]
 
 
 def Extract_Max(A):
@@ -146,16 +147,17 @@ def Extract_Max(A):
         :return: the maximum value in array A
         :rtype: int
         """
-    maxValue = A[0]
-    del A[0]
-    A.insert(0, A.pop())
-    return maxValue
+    if len(A) != 0:
+        maxValue = A[0]
+        del A[0]
+        A.insert(0, A.pop())
+        return maxValue
 
 
 
 
 def Increase_Key(A, x, k):
-    """
+    """ Increases value of node x to value of k as long as it is greater
 
         :param A: an array.
         :param x: the element to be increased
@@ -164,10 +166,9 @@ def Increase_Key(A, x, k):
         :type x: int
         :type k: int
         """
-    build_max_heap(A)
-    for i in range(len(A)):
-        if A[i] == x:
-            A[i] = k
+    element = A[x-1]
+    if k > element:
+        A[x-1] = k
 
 
 ############# DO NOT MODIFY ##############################
@@ -184,25 +185,25 @@ class testHeapSort(unittest.TestCase):
         Insert(A, 15)
         build_max_heap(A)
         self.assertEqual(A, [19, 17, 18, 16, 10, 6, 15, 13, 1, 8, 5, 4, 2, 3, 12])
-    def test_insert_3(self):
-        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
+    def test_insert_emtpy_3(self):
+        A = HeapCapable([])
         build_max_heap(A)
         Insert(A, 3)
         build_max_heap(A)
-        self.assertEqual(A, [22, 9, 17, 8, 1, 5, 2, 0, 3])
+        self.assertEqual(A, [3])
 
-    def test_maximum_1(self):
+    def test_maximum_endofarray_1(self):
         A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0, 51])
         build_max_heap(A)
         self.assertEqual(Maximum(A), 51)
-    def test_maximum_2(self):
+    def test_maximum_startofarray_2(self):
         A = HeapCapable([19, 5, 3, 16, 8, 2, 18, 13, 1, 17, 10, 4, 6, 12])
         build_max_heap(A)
         self.assertEqual(Maximum(A), 19)
-    def test_maximum_3(self):
-        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
+    def test_maximum_emptyarray_3(self):
+        A = HeapCapable([])
         build_max_heap(A)
-        self.assertEqual(Maximum(A), 22)
+        self.assertEqual(Maximum(A), None)
 
     def test_extractMaximumReturn_1(self):
         A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0])
@@ -212,11 +213,11 @@ class testHeapSort(unittest.TestCase):
         A = HeapCapable([19, 5, 3, 16, 8, 2, 18, 13, 1, 17, 10, 4, 6, 12])
         build_max_heap(A)
         self.assertEqual(Extract_Max(A), 19)
-    def test_extractMaximumReturn_3(self):
-        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
+    def test_extractMaximumReturn_empty_3(self):
+        A = HeapCapable([])
         build_max_heap(A)
-        self.assertEqual(Extract_Max(A), 22)
-    def test_extractMaximumRemove_1(self):
+        self.assertEqual(Extract_Max(A), None)
+    def test_extractMaximumRemove_bestcase_1(self):
         A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0])
         build_max_heap(A)
         Extract_Max(A)
@@ -235,18 +236,24 @@ class testHeapSort(unittest.TestCase):
         build_max_heap(A)
         self.assertEqual(A, [17, 9, 5, 8, 1, 0, 2])
 
-    def test_increasetkey_1(self):
+    def test_increasekey_bestcase_1(self):
         A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0])
-        Increase_Key(A, 16, 25)
-        self.assertEqual(A[3], 25)
-    def test_increasetkey_2(self):
+        build_max_heap(A)
+        Increase_Key(A, 8, 20)
+        build_max_heap(A)
+        self.assertEqual(A[1], 20)
+    def test_increasekey_smallervalue_2(self):
         A = HeapCapable([19, 5, 3, 16, 8, 2, 18, 13, 1, 17, 10, 4, 6, 12])
-        Increase_Key(A, 1, 7)
-        self.assertEqual(A[8], 7)
-    def test_increasetkey_3(self):
-        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
-        Increase_Key(A, 2, 3)
-        self.assertEqual(A[6], 3)
+        build_max_heap(A)
+        Increase_Key(A, 5, 4)
+        build_max_heap(A)
+        self.assertEqual(A[4], 10)
+    def test_increasekey_largerroot_3(self):
+        A = HeapCapable([5, 1, 2, 17, 8, 9, 22, 2, 0])
+        build_max_heap(A)
+        Increase_Key(A, 1, 25)
+        build_max_heap(A)
+        self.assertEqual(A[0], 25)
 
     def test_left_1(self):
         self.assertEqual(left(0), 1)

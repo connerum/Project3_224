@@ -1,3 +1,5 @@
+# GROUP: Conner Um & Landen Finlinson
+
 import unittest
 import math
 

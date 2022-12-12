@@ -50,7 +50,7 @@ def right(i):
     :return: the index of the given node's right child
     :rtype: int
     """
-    return 2 * i + 2
+    return 2 * (i + 1)
 
 
 def parent(i):
@@ -64,7 +64,7 @@ def parent(i):
     :return: the index of the given node's parent
     :rtype: int
     """
-    return (i - 1) // 2
+    return math.floor((i - 1) / 2)
 
 
 def max_heapify(A, i):
@@ -80,13 +80,11 @@ def max_heapify(A, i):
     l = left(i)
     r = right(i)
 
+    largest = i
     if l < A.heap_size and A[l] > A[i]:
         largest = l
-    else:
-        largest = i
     if r < A.heap_size and A[r] > A[largest]:
         largest = r
-
     if largest != i:
         A[i], A[largest] = A[largest], A[i]
         max_heapify(A, largest)
@@ -100,7 +98,7 @@ def build_max_heap(A):
     :type A: heapsort_skeleton.HeapCapable
     """
     A.heap_size = len(A)
-    for i in range((len(A) - 1) // 2, -1, -1):
+    for i in range(math.floor((len(A) / 2)), -1, -1):
         max_heapify(A, i)
 
 
@@ -112,31 +110,61 @@ def HeapSort(A):
     :type A: heapsort_skeleton.HeapCapable
     """
     build_max_heap(A)
-    for i in range(len(A) - 1, 0, -1):
+    for i in range((len(A) - 1), 0, -1):
         A[0], A[i] = A[i], A[0]
         A.heap_size -= 1
         max_heapify(A, 0)
 
+
 def Insert(A, x):
+    """ Inserts the element, x, into the array A
+
+        :param A: an array.
+        :param x: the element to be added
+        :type A: heapsort_skeleton.HeapCapable
+        :type x: int
+        """
     A.append(x)
 
+
 def Maximum(A):
-    max = 0
-    for i in range(len(A)):
-        if A[i] > A[max]:
-            max = i
-    return A[max]
+    """ Return the maximum element in array A
+
+    :param A: an array.
+    :type A: heapsort_skeleton.HeapCapable
+    :return: the maximum value in array A
+    :rtype: int
+    """
+    return A[0]
+
 
 def Extract_Max(A):
-    max = 0
-    for i in range(len(A)):
-        if A[i] > A[max]:
-            max = i
-    item = A[max]
-    del A[max]
-    return item
+    """ Delete the Maximum element from array A then return the maximum element in array A
+
+        :param A: an array.
+        :type A: heapsort_skeleton.HeapCapable
+        :return: the maximum value in array A
+        :rtype: int
+        """
+    maxValue = A[0]
+    del A[0]
+    A.insert(0, A.pop())
+    return maxValue
+
+
+
 
 def Increase_Key(A, x, k):
+    """
+
+        :param A: an array.
+        :param x: the element to be increased
+        :param k: the desired value to increase to
+        :type A: heapsort_skeleton.HeapCapable
+        :type x: int
+        :type k: int
+        """
+    build_max_heap(A)
     for i in range(len(A)):
         if A[i] == x:
             A[i] = k
@@ -146,21 +174,79 @@ def Increase_Key(A, x, k):
 class testHeapSort(unittest.TestCase):
     def test_insert_1(self):
         A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0])
+        build_max_heap(A)
         Insert(A, 5)
-        self.assertEqual(A[14], 5)
+        build_max_heap(A)
+        self.assertEqual(A, [27, 17, 10, 16, 13, 9, 5, 5, 7, 12, 4, 8, 3, 0, 1])
+    def test_insert_2(self):
+        A = HeapCapable([19, 5, 3, 16, 8, 2, 18, 13, 1, 17, 10, 4, 6, 12])
+        build_max_heap(A)
+        Insert(A, 15)
+        build_max_heap(A)
+        self.assertEqual(A, [19, 17, 18, 16, 10, 6, 15, 13, 1, 8, 5, 4, 2, 3, 12])
+    def test_insert_3(self):
+        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
+        build_max_heap(A)
+        Insert(A, 3)
+        build_max_heap(A)
+        self.assertEqual(A, [22, 9, 17, 8, 1, 5, 2, 0, 3])
 
     def test_maximum_1(self):
         A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0, 51])
+        build_max_heap(A)
         self.assertEqual(Maximum(A), 51)
+    def test_maximum_2(self):
+        A = HeapCapable([19, 5, 3, 16, 8, 2, 18, 13, 1, 17, 10, 4, 6, 12])
+        build_max_heap(A)
+        self.assertEqual(Maximum(A), 19)
+    def test_maximum_3(self):
+        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
+        build_max_heap(A)
+        self.assertEqual(Maximum(A), 22)
 
-    def test_extractMaximum_1(self):
+    def test_extractMaximumReturn_1(self):
         A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0])
+        build_max_heap(A)
         self.assertEqual(Extract_Max(A), 27)
+    def test_extractMaximumReturn_2(self):
+        A = HeapCapable([19, 5, 3, 16, 8, 2, 18, 13, 1, 17, 10, 4, 6, 12])
+        build_max_heap(A)
+        self.assertEqual(Extract_Max(A), 19)
+    def test_extractMaximumReturn_3(self):
+        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
+        build_max_heap(A)
+        self.assertEqual(Extract_Max(A), 22)
+    def test_extractMaximumRemove_1(self):
+        A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0])
+        build_max_heap(A)
+        Extract_Max(A)
+        build_max_heap(A)
+        self.assertEqual(A, [17, 16, 10, 7, 13, 9, 1, 5, 0, 12, 4, 8, 3])
+    def test_extractMaximumRemove_2(self):
+        A = HeapCapable([19, 5, 3, 16, 8, 2, 18, 13, 1, 17, 10, 4, 6, 12])
+        build_max_heap(A)
+        Extract_Max(A)
+        build_max_heap(A)
+        self.assertEqual(A, [18, 17, 12, 16, 10, 6, 3, 13, 1, 8, 5, 4, 2])
+    def test_extractMaximumRemove_3(self):
+        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
+        build_max_heap(A)
+        Extract_Max(A)
+        build_max_heap(A)
+        self.assertEqual(A, [17, 9, 5, 8, 1, 0, 2])
 
     def test_increasetkey_1(self):
         A = HeapCapable([27, 17, 3, 16, 13, 10, 1, 5, 7, 12, 4, 8, 9, 0])
         Increase_Key(A, 16, 25)
         self.assertEqual(A[3], 25)
+    def test_increasetkey_2(self):
+        A = HeapCapable([19, 5, 3, 16, 8, 2, 18, 13, 1, 17, 10, 4, 6, 12])
+        Increase_Key(A, 1, 7)
+        self.assertEqual(A[8], 7)
+    def test_increasetkey_3(self):
+        A = HeapCapable([5, 1, 17, 8, 9, 22, 2, 0])
+        Increase_Key(A, 2, 3)
+        self.assertEqual(A[6], 3)
 
     def test_left_1(self):
         self.assertEqual(left(0), 1)
@@ -210,7 +296,7 @@ class testHeapSort(unittest.TestCase):
 
     def test_max_heapify_reduced_heap_size(self):
         """ 
-        Max-Heapify() should always ckeck against the heap's size, not the array's length!
+        Max-Heapify() should always check against the heap's size, not the array's length!
         """
         A = HeapCapable([3, 10, 7, 9, 7, 5, 2, 8, 5, 4])
         A.heap_size = 7
